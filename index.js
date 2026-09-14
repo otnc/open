@@ -112,8 +112,13 @@ const baseOpen = async options => {
 			browser = await defaultBrowser();
 		}
 
-		if (Object.hasOwn(ids, browser.id)) {
-			const browserName = ids[browser.id.toLowerCase()];
+		// Bundle/prog IDs preserve whatever casing the browser vendor chose (for example
+		// macOS Safari is `com.apple.Safari` and Brave is `com.brave.Browser`), so the
+		// lookup key has to be lowercased before `hasOwn`, not just before the value read.
+		const browserId = browser.id?.toLowerCase();
+
+		if (Object.hasOwn(ids, browserId)) {
+			const browserName = ids[browserId];
 			if (browserName === undefined) {
 				throw new Error(`${browser.name} is not supported as a default browser`);
 			}
